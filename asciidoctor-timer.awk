@@ -3,6 +3,7 @@ BEGIN {
 
 	level = 0
 	nextsectionnumber = 0
+	maxtitlelength = 0
 
 	strftime = PROCINFO["strftime"]
 }
@@ -40,6 +41,12 @@ function close_sections(tolevel) {
 		timers[newlevel] = time
 		titles[newlevel] = newtitle
 		sectionnumbers[newlevel] = nextsectionnumber++
+
+		# Store the max title size
+		titlelength = length(newtitle) + level + 2
+		if (titlelength > maxtitlelength) {
+			maxtitlelength = titlelength
+		}
 	}
 
 	print $0
@@ -52,15 +59,14 @@ END {
 	print "== Timings"
 	print ""
 	print "|====="
-	print "| Section                    | Duration"
+	printf("| %-" maxtitlelength "s | %s\n", "Section", "Duration")
 	for (i = 0; i < nextsectionnumber; i++) {
 		lvl = results[i "level"]
 		prefix = substr("      ", 0, lvl - 1)
-		width = 30
+		width = maxtitlelength
 		if (lvl > 1) {
 			prefix = prefix "└─ "
-		} else {
-			width = width - 4
+			width = width + 4
 		}
 		printf(\
 			"| %-" width "s | %0.1fs\n",\
