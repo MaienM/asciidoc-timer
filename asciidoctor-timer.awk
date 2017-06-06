@@ -43,7 +43,8 @@ function close_sections(tolevel) {
 		sectionnumbers[newlevel] = nextsectionnumber++
 
 		# Store the max title size
-		titlelength = length(newtitle) + level + 2
+		calculateprefix(newlevel)
+		titlelength = length(newtitle) + prefixlength
 		if (titlelength > maxtitlelength) {
 			maxtitlelength = titlelength
 		}
@@ -52,21 +53,40 @@ function close_sections(tolevel) {
 	print $0
 }
 
+function calculateprefix(lvl) {
+	prefix = ""
+	prefixucount = 0
+
+	# Prefix with one ideagraphic space (U+3000) per level
+	for (l = 2; l < lvl; l++) {
+		prefix = prefix "　"
+		prefixucount++
+	}
+
+	# Add the sub-item-of character, which is actually 2 unicode characters
+	if (lvl > 1) {
+		prefix = prefix "└─ "
+		prefixucount = prefixucount + 2
+	}
+
+	prefixlength = length(prefix) - 2 * prefixucount
+}
+
 END {
 	close_sections(1)
 	print ""
 	print ""
 	print "== Timings"
 	print ""
+	print "[options='header', cols='8,1', frame='none', stripe='odd']"
 	print "|====="
 	printf("| %-" maxtitlelength "s | %s\n", "Section", "Duration")
 	for (i = 0; i < nextsectionnumber; i++) {
 		lvl = results[i "level"]
-		prefix = substr("      ", 0, lvl - 1)
-		width = maxtitlelength
-		if (lvl > 1) {
-			prefix = prefix "└─ "
-			width = width + 4
+		calculateprefix(lvl)
+		width = maxtitlelength + prefixlength + 1
+		if (prefixucount <= 0) {
+			width--
 		}
 		printf(\
 			"| %-" width "s | %0.1fs\n",\
