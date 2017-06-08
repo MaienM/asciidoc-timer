@@ -84,7 +84,7 @@ END {
 	for (i = 0; i < nextsectionnumber; i++) {
 		lvl = results[i "level"]
 		calculateprefix(lvl)
-		width = maxtitlelength + prefixlength + 1
+		width = maxtitlelength + prefixlength + 2
 		if (prefixucount <= 0) {
 			width--
 		}
