@@ -78,7 +78,7 @@ END {
 	print ""
 	print "== Timings"
 	print ""
-	print "[options='header', cols='8,1', frame='none', stripe='odd']"
+	print "[.timings, options='header', cols='8,1', frame='none', stripe='odd']"
 	print "|====="
 	printf("| %-" maxtitlelength "s | %s\n", "Section", "Duration")
 	for (i = 0; i < nextsectionnumber; i++) {
